@@ -1,0 +1,18 @@
+{
+    "db": {
+        "jdbcUrl": "jdbc:sqlite:/home/ubuntu/scratch/test.sqlite3",
+        "jdbcDriverClass": "org.sqlite.JDBC",
+        "userName": "",
+        "password": "",
+        "tblNameIgnoreRegexes": ["ar_internal_metadata", "schema_migrations", "sqlite_.*"],
+        "unique": [["articles", ["id"]], ["comments", ["id"]]],
+        "foreign": [["comments", "article_id", "articles", "id"]]
+    },
+    "sut": {
+        "commandLine": ["/home/ubuntu/dse/rails-getting-started/bin/rails", "test", "test/controllers/articles_controller_test.rb"],
+        "cwd": "/home/ubuntu/dse/rails-getting-started"
+    },
+    "symDb": {
+        "rowBound": 2
+    }
+}

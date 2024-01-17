@@ -1,0 +1,36 @@
+{
+    "db": {
+        "jdbcUrl": "jdbc:mysql://localhost:3306/diaspora_test?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&character_set_server=utf8mb4&collation_server=utf8mb4_bin,diaspora_test",
+        "jdbcDriverClass": "com.mysql.cj.jdbc.Driver",
+        "userName": "diaspora",
+        "password": "12345678",
+        "tblNameIgnoreRegexes": ["ar_internal_metadata", "schema_migrations"],
+        "constraints": {
+            "unique": [
+                ["users", ["id"]],
+                ["posts", ["id"]],
+                ["people", ["id"]],
+                ["profiles", ["id"]]
+            ],
+            "foreign": [
+                ["people", "owner_id", "users", "id"],
+                ["users", "id", "people", "owner_id"],
+                ["posts", "author_id", "people", "id"],
+                ["profiles", "person_id", "people", "id"],
+                ["people", "id", "profiles", "person_id"]
+            ],
+            "oneof": [
+                ["users", "language", ["en"]],
+                ["posts", "type", ["StatusMessage", "Reshare"]]
+            ]
+        }
+    },
+    "sut": {
+        "commandLine": ["/home/ubuntu/dse/jruby/bin/ruby", "/home/ubuntu/dse/diaspora/bin/rspec_dse", "spec/controllers/invoke_all_controller_spec.rb", "--order", "defined"],
+        "cwd": "/home/ubuntu/dse/diaspora",
+        "mode": "Socket"
+    },
+    "symDb": {
+        "rowBound": 1
+    }
+}
