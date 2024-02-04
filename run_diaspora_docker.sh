@@ -15,7 +15,6 @@ fi
 FILE="$(basename "${DSE_TUNNEL_PATH}")"
 
 exec docker run \
-  --cpus=1 \
   -v "${DIR}":/var/run/dse \
   --env "DSE_TUNNEL_PATH=/var/run/dse/$FILE" \
   --rm \
