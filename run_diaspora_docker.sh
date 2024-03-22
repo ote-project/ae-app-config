@@ -17,6 +17,7 @@ FILE="$(basename "${DSE_TUNNEL_PATH}")"
 exec docker run \
   -v "${DIR}":/var/run/dse \
   --env "DSE_TUNNEL_PATH=/var/run/dse/$FILE" \
+  --tmpfs /tmpfs \
   --rm \
   diaspora-dse "$@"
 
