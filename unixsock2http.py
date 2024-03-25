@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 import os
+import requests
+from time import sleep
 import socket
 import sys
-import requests
+
+
+NUM_RETRIES = 10
+RETRY_WAIT_S = 1
 
 
 def main():
@@ -17,17 +22,23 @@ def main():
     server.bind(socket_path)
     server.listen(1)
 
-    print("Listening for incoming connections...")
+    print(f"Listening for incoming connections on {socket_path}...")
     conn, _ = server.accept()
     print(f"Connection received!")
     try:
         with conn.makefile("rw") as f:
             while req_text := f.readline().strip():
-                r = requests.post(url, data=req_text)
-                if r.status_code != requests.codes.ok:
-                    print(f"URL request failed with status {r.status_code}: {r.text}", file=sys.stderr)
+                for i in range(NUM_RETRIES):
+                    r = requests.post(url, data=req_text)
+                    if r.status_code != requests.codes.ok:
+                        print(f"URL request failed with status {r.status_code}: {r.text}", file=sys.stderr)
+                        sleep(RETRY_WAIT_S)
+                        continue
+                    print(r.text.strip(), file=f, flush=True)
+                    break
+                else:
+                    print(f"Giving up after {i} retries", file=sys.stderr)
                     sys.exit(1)
-                print(r.text.strip(), file=f, flush=True)
     finally:
         conn.close()
         server.close()
